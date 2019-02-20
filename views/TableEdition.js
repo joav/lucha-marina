@@ -4,26 +4,29 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Directions from '../utils/Directions';
 import Functions from '../utils/Functions';
 import EditionActions from '../utils/EditionActions';
-import ShipM from '../models/ShipM';
+import shipm from '../models/ShipM';
 import Table from '../components/Table';
 import ShipEdit from '../components/ShipEdit';
 import Point from '../utils/Point';
 
+let ShipM = shipm.ShipM;
+let renderShip = shipm.renderShip;
+
 let gP = Functions.gP;
 let { UP, RIGHT } = Directions;
 
-let defaultShips = (onPress)=>{
+let defaultShips = ()=>{
     return [
-        new ShipM('Submarine', gP(0,0), RIGHT, onPress),
-        new ShipM('Submarine', gP(0,1), RIGHT, onPress),
-        new ShipM('Submarine', gP(0,2), RIGHT, onPress),
-        new ShipM('Submarine', gP(0,3), RIGHT, onPress),
-        new ShipM('Destructor', gP(0,4), RIGHT, onPress),
-        new ShipM('Destructor', gP(0,5), UP, onPress),
-        new ShipM('Destructor', gP(0,6), RIGHT, onPress),
-        new ShipM('Cruiser', gP(0,7), RIGHT, onPress),
-        new ShipM('Cruiser', gP(0,8), RIGHT, onPress),
-        new ShipM('Battleship', gP(0,9), RIGHT, onPress)
+        new ShipM('Submarine', gP(0,0), RIGHT),
+        new ShipM('Submarine', gP(0,1), RIGHT),
+        new ShipM('Submarine', gP(0,2), RIGHT),
+        new ShipM('Submarine', gP(0,3), RIGHT),
+        new ShipM('Destructor', gP(0,4), RIGHT),
+        new ShipM('Destructor', gP(0,5), UP),
+        new ShipM('Destructor', gP(0,6), RIGHT),
+        new ShipM('Cruiser', gP(0,7), RIGHT),
+        new ShipM('Cruiser', gP(0,8), RIGHT),
+        new ShipM('Battleship', gP(0,9), RIGHT)
     ];
 }
 
@@ -33,14 +36,14 @@ export default class TableEdition extends React.Component {
     }
     constructor(props){
         super(props);
-        let ships = props.isDefault?defaultShips(this.onShipSelect):props.ships;
+        let ships = props.isDefault?defaultShips():props.ships;
         this.state = {
             ships: ships
         }
     }
     render(){
         let ships = this.state.ships.map((ship, i) => {
-            return ship.renderShip(i);
+            return renderShip(i, ship, this.onShipSelect);
         });
         let edits = this.state.ships.map((ship, i) => {
             return <ShipEdit
@@ -63,18 +66,14 @@ export default class TableEdition extends React.Component {
         );
     }
     onShipSelect = (key)=>{
-        let ships = this.state.ships.map(ship => {
-            let newShip = {...ship, selected: false, renderShip: ship.renderShip};
-            newShip.renderShip.bind(newShip);
-        });
-        let shipSelected = this.state.ships.findIndex(ship => ship.selected);
-        let renderShip = ships[key].renderShip;
+        let ships = [...this.state.ships];
+        let shipSelected = ships.findIndex(ship => ship.selected);
         if(key != shipSelected ){
-            ships[key] = {...ships[key], selected: true, renderShip: renderShip};
+            ships = this.state.ships.map(ship => ({...ship, selected: false}));
+            ships[key] = {...ships[key], selected: true};
         }else{
-            ships[key] = {...ships[key], selected: false, renderShip: renderShip};
+            ships[key] = {...ships[key], selected: false};
         }
-        ships[key].renderShip.bind(ships[key]);
         this.setState({ ships });
     }
     onPressTool = (shipId, action) => {
@@ -101,17 +100,15 @@ export default class TableEdition extends React.Component {
         }
     }
     shipMove(shipId, pos){
-        let ships = this.state.ships.map(ship => ({...ship}));
-        pos.x += ships[shipId].x;
-        pos.y += ships[shipId].y;
+        let ships = [...this.state.ships];
+        pos.x += ships[shipId].pos.x;
+        pos.y += ships[shipId].pos.y;
         ships[shipId] = {...ships[shipId], pos: pos};
-        ships[shipId].renderShip.bind(ships[shipId]);
         this.setState({ ships });
     }
     shipTurn(shipId){
-        let ships = this.state.ships.map(ship => ({...ship}));
+        let ships = [...this.state.ships];
         ships[shipId] = {...ships[shipId], dir: (ships[shipId].dir == UP?RIGHT:UP)};
-        ships[shipId].renderShip.bind(ships[shipId]);
         this.setState({ ships });
     }
 }
