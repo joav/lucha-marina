@@ -9,9 +9,6 @@ export default class Submarine extends Ship {
   name = 'Submrine';
   constructor(props){
     super(props);
-    this.state = {
-      pieces: this.pieces()
-    };
   }
   render(){
     return this.renderSuper();

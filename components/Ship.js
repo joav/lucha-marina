@@ -28,13 +28,16 @@ export default class Ship extends React.Component {
     );
   }
   renderPieces(){
+    this.getPiecesDir(this.props);
+    let newPieces = this.pieces();
     let piecesToRender = [];
-    for(let i in this.state.pieces){
+    // let onPress = this.props.enableDestroy?this.onPressPiece:()=>{};
+    for(let i in newPieces){
       piecesToRender.push(<Piece 
-        hit={this.state.pieces[i].hit}
+        hit={newPieces[i].hit}
         dead={this.props.dead}
-        baseStyle={this.state.pieces[i].style()}
-        hitStyle={this.state.pieces[i].styleHit()}
+        baseStyle={newPieces[i].style()}
+        hitStyle={newPieces[i].styleHit()}
         id={i}
         key={i}
         onPress={this.onPressPiece}
@@ -43,14 +46,19 @@ export default class Ship extends React.Component {
     return piecesToRender;
   }
   onPressPiece = (id) => {
-    this.setState((state, props) => {
-      let pieces = this.pieces();
-      for(let i in pieces){
-        pieces[i].setHit(state.pieces[i].hit);
-      }
-      pieces[id].setHit(true);
-      return {pieces: pieces}
-    });
+    console.log(this.props.onPress);
+    if(this.props.enableDestroy){
+      this.setState((state, props) => {
+        let pieces = this.pieces();
+        for(let i in pieces){
+          pieces[i].setHit(state.pieces[i].hit);
+        }
+        pieces[id].setHit(true);
+        return {pieces: pieces}
+      });
+    }else{
+      this.props.onPress(this.props.id);
+    }
   }
   getPiecesDir(props){
     this.p1Dir = Directions.UP;
@@ -67,6 +75,9 @@ export default class Ship extends React.Component {
         this.p2Dir = Directions.RIGHT;
         break;
     }
+  }
+  pieces() {
+    return [];
   }
 }
 

@@ -14,13 +14,21 @@ import Battleship from './Battleship';
 let gP = Functions.gP;
 
 export default class Table extends React.Component {
+  static defaultProps = {
+    onPressCell: ()=>{},
+    numHorizontal: 10,
+    numVertical: 10
+  }
   constructor(props){
     super(props)
   }
   render(){
-    let cells = Array(100).fill(0).map((val, i) => {
-      let column = (i % 10) + 1;
-      let row = Math.floor(i / 10);
+    let { numVertical, numHorizontal } = this.props;
+    const numCells = numHorizontal * numVertical;
+    const rows = Array(numVertical).fill(0).map((val,i) => String.fromCharCode(65 + i) );
+    let cells = Array(numCells).fill(0).map((val, i) => {
+      let column = (i % numHorizontal) + 1;
+      let row = Math.floor(i / numVertical);
       return (
         <Cell id={i} key={i} row={rows[row]} column={column} onPress={this.onPressCell} />
       );
@@ -28,12 +36,17 @@ export default class Table extends React.Component {
     let rowNames = rows.map(row=>(
       <Text key={row} style={{...styles.name, ...styles.rowName}} >{row}</Text>
     ));
-    let columnNames = Array(10).fill(0).map((val,i)=>(
+    let columnNames = Array(numHorizontal).fill(0).map((val,i)=>(
       <Text key={(i+1)} style={{...styles.name, ...styles.columnName}} >{(i+1)}</Text>
     ));
     columnNames.unshift((
       <Text key={-1} style={{...styles.name, ...styles.columnName}}></Text>
     ));
+    let widthHeight = {
+      width: gameConstants.pieceSize * numHorizontal,
+      height: gameConstants.pieceSize * numVertical
+    }
+    // let containerStyle = {...styles.container, ...widthHeight};
     
     return (
       <View style={styles.container}>
@@ -46,14 +59,7 @@ export default class Table extends React.Component {
           </View>
           <View style={styles.cells} >
             {cells}
-            <Submarine dead={false} pos={gP(0,0)} />
-            <Submarine dead={false} pos={gP(0,5)} />
-            <Destructor dir={Directions.LEFT} dead={false} pos={gP(6,7)} />
-            <Destructor dir={Directions.UP} dead={false} pos={gP(5,3)} />
-            <Destructor dir={Directions.LEFT} dead={false} pos={gP(7,0)} />
-            <Cruiser dir={Directions.LEFT} dead={false} pos={gP(5,9)} />
-            <Cruiser dir={Directions.UP} dead={false} pos={gP(0,7)} />
-            <Battleship dir={Directions.LEFT} dead={false} pos={gP(1,6)} />
+            
             {this.props.children}
           </View>
         </View>
@@ -65,7 +71,16 @@ export default class Table extends React.Component {
   }
 }
 
-const rows = Array(10).fill(0).map((val,i) => String.fromCharCode(65 + i) );
+/*
+<Submarine dead={false} pos={gP(0,0)} />
+<Submarine dead={false} pos={gP(0,5)} />
+<Destructor dir={Directions.LEFT} dead={false} pos={gP(6,7)} />
+<Destructor dir={Directions.UP} dead={false} pos={gP(5,3)} />
+<Destructor dir={Directions.LEFT} dead={false} pos={gP(7,0)} />
+<Cruiser dir={Directions.LEFT} dead={false} pos={gP(5,9)} />
+<Cruiser dir={Directions.UP} dead={false} pos={gP(0,7)} />
+<Battleship dir={Directions.LEFT} dead={false} pos={gP(1,6)} />
+*/
 
 const styles = StyleSheet.create({
   container: {

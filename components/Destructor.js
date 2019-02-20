@@ -10,10 +10,6 @@ export default class Destructor extends Ship {
   name = 'Destructor';
   constructor(props){
     super(props);
-    this.getPiecesDir(props);
-    this.state = {
-      pieces: this.pieces()
-    };
   }
   render(){
     return this.renderSuper();

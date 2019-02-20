@@ -2,7 +2,7 @@ import PieceStyle from '../utils/PieceStyles';
 import PieceTypes from '../utils/PieceTypes';
 import Directions from '../utils/Directions';
 
-export default class PeceM{
+export default class PieceM{
   constructor(pos, type, dir = null){
     this.hit = false;
     this.pos = pos;

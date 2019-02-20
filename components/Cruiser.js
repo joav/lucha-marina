@@ -11,10 +11,6 @@ export default class Cruiser extends Ship {
   
   constructor(props){
     super(props);
-    this.getPiecesDir(props);
-    this.state = {
-      pieces: this.pieces(),
-    };
   }
   render(){
     return this.renderSuper();

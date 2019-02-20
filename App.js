@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Dimensions, StatusBar } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, StatusBar, ScrollView } from 'react-native';
 import { Constants } from 'expo';
 
 // You can import from local files
@@ -13,6 +13,7 @@ import Destructor from './components/Destructor';
 import Cruiser from './components/Cruiser';
 import Battleship from './components/Battleship';
 import Table from './components/Table';
+import TableEdition from './views/TableEdition';
 
 // or any pure javascript modules available in npm
 import { Card } from 'react-native-paper';
@@ -22,12 +23,11 @@ let gP = Functions.gP;
 export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Table onPressCell={this.onPressCell} >
-            <Submarine dead={false} pos={gP(5,0)} />
-            <Submarine dead={false} pos={gP(3,4)} />
-        </Table>
-      </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <TableEdition />
+        </View>
+      </ScrollView>
     );
   }
   onPressCell = (id)=>{
