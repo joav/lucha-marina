@@ -16,6 +16,12 @@ export default class Ship extends React.Component {
   }
   constructor(props){
     super(props);
+    if(props.enableDestroy){
+      this.getPiecesDir(props);
+      this.state = {
+        pieces: this.pieces()
+      }
+    }
     this.p1Dir = null;
     this.p2Dir = null;
   }
@@ -46,7 +52,6 @@ export default class Ship extends React.Component {
     return piecesToRender;
   }
   onPressPiece = (id) => {
-    console.log(this.props.onPress);
     if(this.props.enableDestroy){
       this.setState((state, props) => {
         let pieces = this.pieces();

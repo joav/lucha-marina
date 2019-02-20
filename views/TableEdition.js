@@ -63,19 +63,19 @@ export default class TableEdition extends React.Component {
         );
     }
     onShipSelect = (key)=>{
-        let newShips = defaultShips(this.onShipSelect);
-        this.setState((state, props) => {
-            for(i in newShips){
-                newShips[i].pos = new Point(state.ships[i].pos.x, state.ships[i].pos.y);
-                newShips[i].dir = state.ships[i].dir;
-                if(key == i && !state.ships[i].selected){
-                    newShips[i].selected = true;
-                }else{
-                    newShips[i].selected = false;
-                }
-            }
-            return { ships: newShips};
+        let ships = this.state.ships.map(ship => {
+            let newShip = {...ship, selected: false, renderShip: ship.renderShip};
+            newShip.renderShip.bind(newShip);
         });
+        let shipSelected = this.state.ships.findIndex(ship => ship.selected);
+        let renderShip = ships[key].renderShip;
+        if(key != shipSelected ){
+            ships[key] = {...ships[key], selected: true, renderShip: renderShip};
+        }else{
+            ships[key] = {...ships[key], selected: false, renderShip: renderShip};
+        }
+        ships[key].renderShip.bind(ships[key]);
+        this.setState({ ships });
     }
     onPressTool = (shipId, action) => {
         let { UP, DOWN, LEFT, RIGHT, TURN, CHECK } = EditionActions;
@@ -101,36 +101,18 @@ export default class TableEdition extends React.Component {
         }
     }
     shipMove(shipId, pos){
-        let newShips = defaultShips(this.onShipSelect);
-        this.setState((state, props) => {
-            for(i in newShips){
-                if(i == shipId){
-                    pos.x += state.ships[i].pos.x;
-                    pos.y += state.ships[i].pos.y;
-                    newShips[i].pos = pos;
-                }else{
-                    newShips[i].pos = new Point(state.ships[i].pos.x, state.ships[i].pos.y);
-                }
-                newShips[i].dir = state.ships[i].dir;
-                newShips[i].selected = state.ships[i].selected;
-            }
-            return { ships: newShips};
-        });
+        let ships = this.state.ships.map(ship => ({...ship}));
+        pos.x += ships[shipId].x;
+        pos.y += ships[shipId].y;
+        ships[shipId] = {...ships[shipId], pos: pos};
+        ships[shipId].renderShip.bind(ships[shipId]);
+        this.setState({ ships });
     }
     shipTurn(shipId){
-        let newShips = defaultShips(this.onShipSelect);
-        this.setState((state, props) => {
-            for(i in newShips){
-                newShips[i].pos = new Point(state.ships[i].pos.x, state.ships[i].pos.y);
-                if(i == shipId){
-                    newShips[i].dir = state.ships[i].dir == UP?RIGHT:UP;
-                }else{
-                    newShips[i].dir = state.ships[i].dir;
-                }
-                newShips[i].selected = state.ships[i].selected;
-            }
-            return { ships: newShips};
-        });
+        let ships = this.state.ships.map(ship => ({...ship}));
+        ships[shipId] = {...ships[shipId], dir: (ships[shipId].dir == UP?RIGHT:UP)};
+        ships[shipId].renderShip.bind(ships[shipId]);
+        this.setState({ ships });
     }
 }
 
