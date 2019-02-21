@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { PropTypes } from 'prop-types';
 
 import Point from '../utils/Point';
@@ -28,9 +28,11 @@ export default class Ship extends React.Component {
   renderSuper(){
     let styleDirection = this.props.dir == Directions.UP || this.props.dir == Directions.DOWN?styles.column:styles.row;
     return (
-      <View style={{ ...styles.container, top: this.props.pos.y, left: this.props.pos.x ,...styleDirection}}>
-        {this.renderPieces()}
-      </View>
+      <TouchableWithoutFeedback onPress={this.onPress}>
+        <View style={{ ...styles.container, top: this.props.pos.y, left: this.props.pos.x ,...styleDirection}}>
+          {this.renderPieces()}
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
   renderPieces(){
@@ -64,6 +66,9 @@ export default class Ship extends React.Component {
     }else{
       this.props.onPress(this.props.id);
     }
+  }
+  onPress = ()=>{
+    this.props.onPress(this,props.id);
   }
   getPiecesDir(props){
     this.p1Dir = Directions.UP;
