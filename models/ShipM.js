@@ -5,27 +5,32 @@ import Submarine from '../components/Submarine';
 import Destructor from '../components/Destructor';
 import Cruiser from '../components/Cruiser';
 import Battleship from '../components/Battleship';
-
-export default class ShipM {
-    constructor(type, pos, dir, onPress = ()=>{}, enableDestroy = false){
+class ShipM {
+    constructor(type, pos, dir, enableDestroy = false){
         this.type = type;
         this.pos = pos;
         this.dir = dir;
         this.dead = false;
         this.enableDestroy = enableDestroy;
         this.selected = false;
-        this.onPress = onPress;
-    }
-    renderShip(key){
-        switch(this.type){
-            case 'Submarine':
-                return (<Submarine onPress={this.onPress} key={key} id={key} dead={this.dead} pos={this.pos} enableDestroy={this.enableDestroy} />);
-            case 'Destructor':
-                return (<Destructor onPress={this.onPress} key={key} id={key} dead={this.dead} pos={this.pos} dir={this.dir} enableDestroy={this.enableDestroy} />);
-            case 'Cruiser':
-                return (<Cruiser onPress={this.onPress} key={key} id={key} dead={this.dead} pos={this.pos} dir={this.dir} enableDestroy={this.enableDestroy} />);
-            case 'Battleship':
-                return (<Battleship onPress={this.onPress} key={key} id={key} dead={this.dead} pos={this.pos} dir={this.dir} enableDestroy={this.enableDestroy} />);
-        }
     }
 }
+function renderShip(key, ship, onPress = ()=>{}){
+    switch(ship.type){
+        case 'Submarine':
+            return (<Submarine onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} enableDestroy={ship.enableDestroy} />);
+        case 'Destructor':
+            return (<Destructor onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
+        case 'Cruiser':
+            return (<Cruiser onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
+        case 'Battleship':
+            return (<Battleship onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
+    }
+}
+
+let shipm = {
+    ShipM: ShipM,
+    renderShip: renderShip
+}
+
+export default shipm;

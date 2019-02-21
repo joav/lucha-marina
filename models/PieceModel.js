@@ -49,3 +49,41 @@ export default class PieceM{
 
 const circleHit = {...PieceStyle.circle, ...PieceStyle.circleHit, ...PieceStyle.hit};
 const squareHit = {...PieceStyle.square, ...PieceStyle.squareHit, ...PieceStyle.hit};
+
+function styleHit(piece){
+  let resultStyles = null;
+  switch(piece.type){
+    case PieceTypes.CIRCLE:
+      resultStyles = circleHit;
+      break;
+    case PieceTypes.TRIANGLE:
+      resultStyles = {...PieceStyle.hit,
+        ...PieceStyle.triangle,
+        ...PieceStyle[`triangle${piece.dir}`],
+        ...PieceStyle[`triangleHit${piece.dir}`]};
+      break;
+    case PieceTypes.SQUARE:
+      resultStyles = squareHit;
+      break;
+  }
+  return resultStyles;
+}
+
+function styleHit(piece){
+  let resultStyles = null;
+  switch(piece.type){
+    case PieceTypes.CIRCLE:
+      resultStyles = circleHit;
+      break;
+    case PieceTypes.TRIANGLE:
+      resultStyles = {...PieceStyle.hit,
+        ...PieceStyle.triangle,
+        ...PieceStyle[`triangle${piece.dir}`],
+        ...PieceStyle[`triangleHit${piece.dir}`]};
+      break;
+    case PieceTypes.SQUARE:
+      resultStyles = squareHit;
+      break;
+  }
+  return resultStyles;
+}
