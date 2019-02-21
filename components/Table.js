@@ -20,32 +20,38 @@ export default class Table extends React.Component {
     numVertical: 10
   }
   constructor(props){
-    super(props)
+    super(props);
+    let { numVertical, numHorizontal } = props;
+    const numCells = numHorizontal * numVertical;
+    let rows = Array(numVertical).fill(0).map((val,i) => String.fromCharCode(65 + i) );
+    let cellsValues = Array(numCells).fill(0).map((val,i) => ({
+      key: i,
+      column: (i % numHorizontal) + 1,
+      row: rows[Math.floor(i / numVertical)]
+    }));
+    let columnNamesValues = Array(numHorizontal).fill(0).map((val, i) => (i+1));
+    let widthHeight = {
+      width: gameConstants.pieceSize * numHorizontal,
+      height: gameConstants.pieceSize * numVertical
+    }
+    this.state = { cellsValues, rows, columnNamesValues, widthHeight };
   }
   render(){
-    let { numVertical, numHorizontal } = this.props;
-    const numCells = numHorizontal * numVertical;
-    const rows = Array(numVertical).fill(0).map((val,i) => String.fromCharCode(65 + i) );
-    let cells = Array(numCells).fill(0).map((val, i) => {
-      let column = (i % numHorizontal) + 1;
-      let row = Math.floor(i / numVertical);
+    let { cellsValues, rows, columnNamesValues, widthHeight } = this.state;
+    let cells = cellsValues.map(cell => {
       return (
-        <Cell id={i} key={i} row={rows[row]} column={column} onPress={this.onPressCell} />
+        <Cell id={cell.key} key={cell.key} row={cell.row} column={cell.column} onPress={this.onPressCell} />
       );
     });
     let rowNames = rows.map(row=>(
       <Text key={row} style={{...styles.name, ...styles.rowName}} >{row}</Text>
     ));
-    let columnNames = Array(numHorizontal).fill(0).map((val,i)=>(
-      <Text key={(i+1)} style={{...styles.name, ...styles.columnName}} >{(i+1)}</Text>
+    let columnNames = columnNamesValues.map((columnName)=>(
+      <Text key={columnName} style={{...styles.name, ...styles.columnName}} >{columnName}</Text>
     ));
     columnNames.unshift((
       <Text key={-1} style={{...styles.name, ...styles.columnName}}></Text>
     ));
-    let widthHeight = {
-      width: gameConstants.pieceSize * numHorizontal,
-      height: gameConstants.pieceSize * numVertical
-    }
     // let containerStyle = {...styles.container, ...widthHeight};
     
     return (

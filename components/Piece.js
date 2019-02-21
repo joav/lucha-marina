@@ -13,7 +13,7 @@ export default class Piece extends React.Component {
     return (
       
         <View style={ this.props.hit? this.props.hitStyle : this.props.baseStyle } >
-          <Text>{this.props.dead?'X':''}</Text>
+          <Text style={styles.deadText} >{this.props.dead?'X':''}</Text>
         </View>
       
     );
@@ -29,3 +29,9 @@ Piece.propTypes = {
   baseStyle: PropTypes.any,
   onPress: PropTypes.any
 }
+
+const styles = StyleSheet.create({
+  deadText: {
+    color: '#FFFFFF'
+  }
+});

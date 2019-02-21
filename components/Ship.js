@@ -6,51 +6,63 @@ import Point from '../utils/Point';
 import Directions from '../utils/Directions';
 import PieceStyle from '../utils/PieceStyles';
 import PieceTypes from '../utils/PieceTypes';
+import PieceModel from '../models/PieceModel';
 import gameConstants from '../utils/GameConstants'
 import Piece from './Piece';
 
 export default class Ship extends React.Component {
   static defaultProps = {
     dead: false,
-    dir: Directions.UP
+    dir: Directions.UP,
+    editing: false
   }
   constructor(props){
     super(props);
-    if(props.enableDestroy){
-      this.getPiecesDir(props);
-      this.state = {
-        pieces: this.pieces()
-      }
+    this.getPiecesDir(props);
+    this.state = {
+      pieces: this.pieces()
     }
+    this.shipSize = this.state.pieces.length * gameConstants.pieceSize;
     this.p1Dir = null;
     this.p2Dir = null;
   }
   renderSuper(){
     let styleDirection = this.props.dir == Directions.UP || this.props.dir == Directions.DOWN?styles.column:styles.row;
+    if(this.props.editing){
+      return (
+        <TouchableWithoutFeedback onPress={this.onPress} style={styles.touchable} >
+          <View style={{ ...styles.container, top: this.props.pos.y, left: this.props.pos.x ,...styleDirection}}>
+            {this.renderPieces(true)}
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    }
     return (
-      <TouchableWithoutFeedback onPress={this.onPress}>
-        <View style={{ ...styles.container, top: this.props.pos.y, left: this.props.pos.x ,...styleDirection}}>
-          {this.renderPieces()}
-        </View>
-      </TouchableWithoutFeedback>
+      <View style={{ ...styles.container, top: this.props.pos.y, left: this.props.pos.x ,...styleDirection}}>
+        {this.renderPieces()}
+      </View>
     );
   }
-  renderPieces(){
+  renderPieces(editing = false){
     this.getPiecesDir(this.props);
-    let newPieces = this.pieces();
-    let piecesToRender = [];
-    // let onPress = this.props.enableDestroy?this.onPressPiece:()=>{};
-    for(let i in newPieces){
-      piecesToRender.push(<Piece 
-        hit={newPieces[i].hit}
-        dead={this.props.dead}
-        baseStyle={newPieces[i].style()}
-        hitStyle={newPieces[i].styleHit()}
-        id={i}
-        key={i}
-        onPress={this.onPressPiece}
-        showStyles={true} />);
+    let newPieces = [...this.state.pieces];
+    if(editing){
+      newPieces[0] = {...newPieces[0], dir: this.p1Dir};
+      newPieces[newPieces.length - 1] = {...newPieces[newPieces.length - 1], dir: this.p2Dir};
     }
+    let piecesToRender = newPieces.map((piece, i)=>{
+      return (
+        <Piece 
+          hit={piece.hit}
+          dead={this.props.dead}
+          baseStyle={PieceModel.style(piece)}
+          hitStyle={PieceModel.styleHit(piece)}
+          id={i}
+          key={i}
+          onPress={this.onPressPiece}
+          showStyles={true} />
+      );
+    });
     return piecesToRender;
   }
   onPressPiece = (id) => {
@@ -68,7 +80,7 @@ export default class Ship extends React.Component {
     }
   }
   onPress = ()=>{
-    this.props.onPress(this,props.id);
+    this.props.onPress(this.props.id);
   }
   getPiecesDir(props){
     this.p1Dir = Directions.UP;
@@ -99,7 +111,6 @@ Ship.propTypes = {
 const styles = StyleSheet.create({
   row:{
     flexDirection: 'row',
-    width: '100%',
     height: gameConstants.pieceSize
   },
   column: {

@@ -3,8 +3,10 @@ import { PropTypes } from 'prop-types';
 
 import PieceTypes from '../utils/PieceTypes';
 import Directions from '../utils/Directions';
-import PieceM from '../models/PieceM';
+import PieceModel from '../models/PieceModel';
 import Ship from './Ship';
+
+const PieceM = PieceModel.PieceM;
 
 export default class Battleship extends Ship {
   name = 'Battleship';

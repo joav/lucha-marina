@@ -2,7 +2,7 @@ import PieceStyle from '../utils/PieceStyles';
 import PieceTypes from '../utils/PieceTypes';
 import Directions from '../utils/Directions';
 
-export default class PieceM{
+class PieceM{
   constructor(pos, type, dir = null){
     this.hit = false;
     this.pos = pos;
@@ -50,6 +50,21 @@ export default class PieceM{
 const circleHit = {...PieceStyle.circle, ...PieceStyle.circleHit, ...PieceStyle.hit};
 const squareHit = {...PieceStyle.square, ...PieceStyle.squareHit, ...PieceStyle.hit};
 
+function style(piece){
+  let resultStyles = null;
+  switch(piece.type){
+    case PieceTypes.CIRCLE:
+      resultStyles = PieceStyle.circle;
+      break;
+    case PieceTypes.TRIANGLE:
+      resultStyles = {...PieceStyle.triangle, ...PieceStyle[`triangle${piece.dir}`]};
+      break;
+    case PieceTypes.SQUARE:
+      resultStyles = PieceStyle.square;
+      break;
+  }
+  return resultStyles;
+}
 function styleHit(piece){
   let resultStyles = null;
   switch(piece.type){
@@ -69,21 +84,10 @@ function styleHit(piece){
   return resultStyles;
 }
 
-function styleHit(piece){
-  let resultStyles = null;
-  switch(piece.type){
-    case PieceTypes.CIRCLE:
-      resultStyles = circleHit;
-      break;
-    case PieceTypes.TRIANGLE:
-      resultStyles = {...PieceStyle.hit,
-        ...PieceStyle.triangle,
-        ...PieceStyle[`triangle${piece.dir}`],
-        ...PieceStyle[`triangleHit${piece.dir}`]};
-      break;
-    case PieceTypes.SQUARE:
-      resultStyles = squareHit;
-      break;
-  }
-  return resultStyles;
+let PieceModel = {
+  PieceM: PieceM,
+  style: style,
+  styleHit: styleHit
 }
+
+export default PieceModel;
