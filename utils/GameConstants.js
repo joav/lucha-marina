@@ -4,7 +4,7 @@ import * as Expo from 'expo'
 class GameConstants{
   static instace = null;
   constructor(){
-    Expo.ScreenOrientation.allowAsync(Expo.ScreenOrientation.Orientation.LANDSCAPE);
+    // Expo.ScreenOrientation.allowAsync(Expo.ScreenOrientation.Orientation.LANDSCAPE);
     this.stHeight = StatusBar.currentHeight;
     this.tableSize = Dimensions.get('screen').height - 50;
     this.pieceSize = this.tableSize / 10;

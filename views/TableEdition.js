@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Button } from 'react-native';
 
 import Directions from '../utils/Directions';
 import Functions from '../utils/Functions';
@@ -58,10 +58,16 @@ export default class TableEdition extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.textContainer} >{'Ordenar Mapa'}</Text>
-                <Table>
-                    {ships}
-                    {edits}
-                </Table>
+                <View style={styles.centralContainer}>
+                    <View style={styles.btnsContainer}>
+                        <Button title='Guardar como...' />
+                        <Button title='Guardar'/>
+                    </View>
+                    <Table>
+                        {ships}
+                        {edits}
+                    </Table>
+                </View>
             </View>
         );
     }
@@ -122,5 +128,13 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         textAlign: 'center'
+    },
+    centralContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around'
+    },
+    btnsContainer: {
+        flexDirection: 'column',
+        justifyContent: 'center'
     }
 });
