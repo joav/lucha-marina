@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "lucha-marina",
-    "description": "No description",
+    "description": "Juego clásico de batalla naval, con nuevos modos de juego:\n- Reta a un amigo a encontrar tus barcos en el menor tiempo posible\n- Uno a uno(tiempo real)\n- Uno a uno(Con notificaciones)\nGuarda la organización de tus naves.\nModo historia: con mapas diferentes por resolver",
     "slug": "snack-Bky3uzwS4",
     "privacy": "unlisted",
     "sdkVersion": "32.0.0",
@@ -23,6 +23,7 @@
     },
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "githubUrl": "https://github.com/joav/lucha-marina"
   }
 }

@@ -15,16 +15,16 @@ class ShipM {
         this.selected = false;
     }
 }
-function renderShip(key, ship, onPress = ()=>{}){
+function renderShip(key, ship, editing, onPress = ()=>{}){
     switch(ship.type){
         case 'Submarine':
-            return (<Submarine onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} enableDestroy={ship.enableDestroy} />);
+            return (<Submarine editing={editing} onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} enableDestroy={ship.enableDestroy} />);
         case 'Destructor':
-            return (<Destructor onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
+            return (<Destructor editing={editing} onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
         case 'Cruiser':
-            return (<Cruiser onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
+            return (<Cruiser editing={editing} onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
         case 'Battleship':
-            return (<Battleship onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
+            return (<Battleship editing={editing} onPress={onPress} key={key} id={key} dead={ship.dead} pos={ship.pos} dir={ship.dir} enableDestroy={ship.enableDestroy} />);
     }
 }
 

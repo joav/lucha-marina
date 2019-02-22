@@ -7,7 +7,6 @@ import EditionActions from '../utils/EditionActions';
 import shipm from '../models/ShipM';
 import Table from '../components/Table';
 import ShipEdit from '../components/ShipEdit';
-import Point from '../utils/Point';
 
 let ShipM = shipm.ShipM;
 let renderShip = shipm.renderShip;
@@ -22,7 +21,7 @@ let defaultShips = ()=>{
         new ShipM('Submarine', gP(0,2), RIGHT),
         new ShipM('Submarine', gP(0,3), RIGHT),
         new ShipM('Destructor', gP(0,4), RIGHT),
-        new ShipM('Destructor', gP(0,5), UP),
+        new ShipM('Destructor', gP(0,5), RIGHT),
         new ShipM('Destructor', gP(0,6), RIGHT),
         new ShipM('Cruiser', gP(0,7), RIGHT),
         new ShipM('Cruiser', gP(0,8), RIGHT),
@@ -33,17 +32,18 @@ let defaultShips = ()=>{
 export default class TableEdition extends React.Component {
     static defaultProps = {
         isDefault: true,
+        ships: defaultShips()
     }
     constructor(props){
         super(props);
-        let ships = props.isDefault?defaultShips():props.ships;
         this.state = {
-            ships: ships
+            ships: props.ships,
+            shipSelected: -1
         }
     }
     render(){
         let ships = this.state.ships.map((ship, i) => {
-            return renderShip(i, ship, this.onShipSelect);
+            return renderShip(i, ship, true, this.onShipSelect);
         });
         let edits = this.state.ships.map((ship, i) => {
             return <ShipEdit
@@ -57,7 +57,7 @@ export default class TableEdition extends React.Component {
         });
         return (
             <View style={styles.container}>
-                <Text>{'Ordenar Mapa'}</Text>
+                <Text style={styles.textContainer} >{'Ordenar Mapa'}</Text>
                 <Table>
                     {ships}
                     {edits}
@@ -67,14 +67,17 @@ export default class TableEdition extends React.Component {
     }
     onShipSelect = (key)=>{
         let ships = [...this.state.ships];
-        let shipSelected = ships.findIndex(ship => ship.selected);
-        if(key != shipSelected ){
-            ships = this.state.ships.map(ship => ({...ship, selected: false}));
+        let shipSelected = key;
+        if(this.state.shipSelected == -1){
             ships[key] = {...ships[key], selected: true};
-        }else{
+        }else if(this.state.shipSelected == key){
             ships[key] = {...ships[key], selected: false};
+            shipSelected = -1;
+        }else{
+            ships[this.state.shipSelected] = {...ships[this.state.shipSelected], selected: false};
+            ships[key] = {...ships[key], selected: true};
         }
-        this.setState({ ships });
+        this.setState({ ships, shipSelected });
     }
     onPressTool = (shipId, action) => {
         let { UP, DOWN, LEFT, RIGHT, TURN, CHECK } = EditionActions;
@@ -116,5 +119,8 @@ export default class TableEdition extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'column'
+    },
+    textContainer: {
+        textAlign: 'center'
     }
 });

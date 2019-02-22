@@ -11,7 +11,7 @@ const PieceStyle = StyleSheet.create({
     width: gameConstants.pieceSize,
     height: gameConstants.pieceSize,
     backgroundColor: colorBase,
-    borderRadius: gameConstants.pieceSize / 2
+    borderRadius: gameConstants.pieceSize / 2,
   },
   circleHit:{
     backgroundColor: hitColor,
