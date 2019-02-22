@@ -1,2 +1,5 @@
 node_modules/
 *git.store
+.expo/
+*packager-info.json
+*settings.json
