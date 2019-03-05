@@ -32,6 +32,8 @@ Piece.propTypes = {
 
 const styles = StyleSheet.create({
   deadText: {
-    color: '#FFFFFF'
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#FFFFFF',
   }
 });

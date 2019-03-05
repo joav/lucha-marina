@@ -53,7 +53,7 @@ export default class Ship extends React.Component {
     let piecesToRender = newPieces.map((piece, i)=>{
       return (
         <Piece 
-          hit={piece.hit}
+          hit={(this.props.dead && this.props.editing) || piece.hit}
           dead={this.props.dead}
           baseStyle={PieceModel.style(piece)}
           hitStyle={PieceModel.styleHit(piece)}

@@ -10,14 +10,15 @@ import ShipEdit from '../components/ShipEdit';
 
 let ShipM = shipm.ShipM;
 let renderShip = shipm.renderShip;
+let shipCollision = shipm.shipCollision;
 
 let gP = Functions.gP;
 let { UP, RIGHT } = Directions;
 
 let defaultShips = ()=>{
     return [
-        new ShipM('Submarine', gP(0,0), RIGHT),
-        new ShipM('Submarine', gP(0,1), RIGHT),
+        new ShipM('Submarine', gP(0,0), RIGHT,false,true),
+        new ShipM('Submarine', gP(0,1), RIGHT,false,true),
         new ShipM('Submarine', gP(0,2), RIGHT),
         new ShipM('Submarine', gP(0,3), RIGHT),
         new ShipM('Destructor', gP(0,4), RIGHT),
@@ -60,8 +61,9 @@ export default class TableEdition extends React.Component {
                 <Text style={styles.textContainer} >{'Ordenar Mapa'}</Text>
                 <View style={styles.centralContainer}>
                     <View style={styles.btnsContainer}>
-                        <Button title='Guardar como...' />
-                        <Button title='Guardar'/>
+                        <Button title='Guardar como...' onPress={this.onPressSaveAs} />
+                        <Button title='Guardar' onPress={this.onPressSave} />
+                        <Button title='Validar' onPress={this.validateMap}/>
                     </View>
                     <Table>
                         {ships}
@@ -119,6 +121,36 @@ export default class TableEdition extends React.Component {
         let ships = [...this.state.ships];
         ships[shipId] = {...ships[shipId], dir: (ships[shipId].dir == UP?RIGHT:UP)};
         this.setState({ ships });
+    }
+    validateMap = () => {
+        let ships = [...this.state.ships];
+        for (const i in ships) {
+            if (ships.hasOwnProperty(i)) {
+                ships[i].dead = false;
+            }
+        }
+        let l = ships.length;
+        let l1 = l - 1;
+        for (let i = 0; i < l1; i++) {
+            let ship1 = ships[i];
+            for (let j = i + 1; j < l; j++) {
+                let ship2 = ships[j];
+                console.log('Verificando Colisión('+i+','+j+')');
+                if(shipCollision(ship1,ship2)){
+                    console.log('Colisión('+i+','+j+')');
+                    ships[i].dead = true;
+                    ships[j].dead = true;
+                    break;
+                }
+            }
+        }
+        this.setState({ ships });
+    }
+    onPressSave = ()=>{
+        console.log('save');
+    }
+    onPressSaveAs = ()=>{
+        console.log('save as');
     }
 }
 
