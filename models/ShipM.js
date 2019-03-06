@@ -34,7 +34,6 @@ class ShipM {
         this.dead = false;
         this.enableDestroy = enableDestroy;
         this.selected = false;
-        this.limit = shipLimit(this);
         this.showValidate = showValidate;
     }
 }
@@ -51,25 +50,11 @@ function renderShip(key, ship, editing, onPress = ()=>{}){
     }
 }
 
-function shipLimit(ship) {
-    let limit = new Point(ship.pos.x,ship.pos.y);
-    switch (ship.dir) {
-        case UP:
-            limit.y += (gameConstants.pieceSize * ship.length);
-            limit.x += gameConstants.pieceSize;
-            break;
-        case RIGHT:
-            limit.y += gameConstants.pieceSize;
-            limit.x += (gameConstants.pieceSize * ship.length);
-            break;
-    }
-    return limit;
-}
-
 function piecesShip(ship){
     let pieces = [];
     let currPos = new Point(ship.pos.x,ship.pos.y);
-    for (let i = 0; i < ship.length; i++) {
+    pieces.push(new Point(ship.pos.x,ship.pos.y));
+    for (let i = 1; i < ship.length; i++) {
         if(ship.dir == UP){
             currPos.y += gameConstants.pieceSize;
         }else{

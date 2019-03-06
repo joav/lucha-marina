@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Modal, TextInput } from 'react-native';
 
 import Directions from '../utils/Directions';
 import Functions from '../utils/Functions';
@@ -7,6 +7,9 @@ import EditionActions from '../utils/EditionActions';
 import shipm from '../models/ShipM';
 import Table from '../components/Table';
 import ShipEdit from '../components/ShipEdit';
+import gameConstants from '../utils/GameConstants';
+import DB from '../utils/DB';
+import Map from '../models/Map';
 
 let ShipM = shipm.ShipM;
 let renderShip = shipm.renderShip;
@@ -17,11 +20,11 @@ let { UP, RIGHT } = Directions;
 
 let defaultShips = ()=>{
     return [
-        new ShipM('Submarine', gP(0,0), RIGHT,false,true),
-        new ShipM('Submarine', gP(0,1), RIGHT,false,true),
+        new ShipM('Submarine', gP(0,0), RIGHT),
+        new ShipM('Submarine', gP(0,1), RIGHT),
         new ShipM('Submarine', gP(0,2), RIGHT),
-        new ShipM('Submarine', gP(0,3), RIGHT),
-        new ShipM('Destructor', gP(0,4), RIGHT),
+        new ShipM('Submarine', gP(0,3), RIGHT, false, true),
+        new ShipM('Destructor', gP(0,4), RIGHT, false, true),
         new ShipM('Destructor', gP(0,5), RIGHT),
         new ShipM('Destructor', gP(0,6), RIGHT),
         new ShipM('Cruiser', gP(0,7), RIGHT),
@@ -33,13 +36,17 @@ let defaultShips = ()=>{
 export default class TableEdition extends React.Component {
     static defaultProps = {
         isDefault: true,
-        ships: defaultShips()
+        toBattle: false,
+        ships: defaultShips(),
+        tableName: 'mapa_personalizado'
     }
     constructor(props){
         super(props);
         this.state = {
             ships: props.ships,
-            shipSelected: -1
+            shipSelected: -1,
+            hasCollisions: false,
+            showModal: false
         }
     }
     render(){
@@ -56,13 +63,20 @@ export default class TableEdition extends React.Component {
             type={ship.type}
             onPressTool={this.onPressTool} />
         });
+        const saveAsText = this.props.toBattle?'Guardar como y continuar':'Guardar como...';
+        const saveText = this.props.toBattle?'Guardar y continuar':'Guardar';
         return (
             <View style={styles.container}>
+                <ChangeName
+                 showModal={this.state.showModal}
+                 name={this.props.tableName}
+                 saveName={this.saveName}
+                 show={this.setChangeNameVisible} />
                 <Text style={styles.textContainer} >{'Ordenar Mapa'}</Text>
                 <View style={styles.centralContainer}>
                     <View style={styles.btnsContainer}>
-                        <Button title='Guardar como...' onPress={this.onPressSaveAs} />
-                        <Button title='Guardar' onPress={this.onPressSave} />
+                        <Button title={saveAsText} onPress={this.onPressSaveAs} />
+                        <Button title={saveText} onPress={this.onPressSave} />
                         <Button title='Validar' onPress={this.validateMap}/>
                     </View>
                     <Table>
@@ -123,6 +137,7 @@ export default class TableEdition extends React.Component {
         this.setState({ ships });
     }
     validateMap = () => {
+        let hasCollisions = this.state.hasCollisions;
         let ships = [...this.state.ships];
         for (const i in ships) {
             if (ships.hasOwnProperty(i)) {
@@ -140,17 +155,38 @@ export default class TableEdition extends React.Component {
                     console.log('Colisión('+i+','+j+')');
                     ships[i].dead = true;
                     ships[j].dead = true;
+                    if(!hasCollisions){
+                        hasCollisions = true;
+                    }
                     break;
                 }
             }
         }
-        this.setState({ ships });
+        this.setState({ ships, hasCollisions });
     }
     onPressSave = ()=>{
-        console.log('save');
+        if(this.props.isDefault){
+            this.onPressSaveAs();
+        }else{
+            
+        }
     }
     onPressSaveAs = ()=>{
-        console.log('save as');
+        this.setChangeNameVisible(true)
+    }
+    saveName = name => {
+        const map = new Map(name, [...this.state.ships]);
+        let db = new DB();
+        console.log('Guardando mapa');
+        db.saveMap(map).then(map => {
+            db.getMaps().then(maps => {
+                console.log('Mapa en base de datos');
+                console.log(map);
+            })
+        });
+    }
+    setChangeNameVisible = (showModal) => {
+        this.setState({showModal});
     }
 }
 
@@ -168,5 +204,58 @@ const styles = StyleSheet.create({
     btnsContainer: {
         flexDirection: 'column',
         justifyContent: 'center'
+    },
+    ChangeName: {
+        height: 32,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        position: 'absolute',
+        bottom: 0
+    },
+    ChangeNameInput: {
+        width: '80%',
+        height: 30,
+        borderColor: 'black',
+        borderWidth: 1
+    },
+    ChangeNameBtn: {
+        width: '20%',
+        height: 30
     }
 });
+
+class ChangeName extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            name: this.props.name
+        }
+    }
+    render() {
+        return (
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={this.props.showModal}
+                onRequestClose={this.saveName}>
+                <View style={styles.ChangeName}>
+                    <TextInput
+                        style={styles.ChangeNameInput}
+                        value={this.state.name}
+                        onChangeText={ name => this.setState({ name }) }
+                     />
+                    <Button title='Aceptar' onPress={this.show} />
+                </View>
+            </Modal>
+        );
+    }
+    show = ()=>{
+        this.props.show(false);
+        this.saveName();
+    }
+    saveName = ()=>{
+        this.props.saveName(this.state.name);
+    }
+}
